@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Addiction is a frictionless slide. Friction is the handrail.">
+    <title>Friction</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #121212;
+            --bg-card: #1c1c1e;
+            --bg-elevated: #2c2c2e;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #636366;
+            
+            --accent-primary: #5e5ce6;
+            --accent-secondary: #34c759;
+            --accent-warning: #ff9f0a;
+            
+            --border-color: rgba(255, 255, 255, 0.08);
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+            
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            height: 100vh;
+            background-color: var(--bg-primary);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            padding-bottom: 100px;
+            overflow-y: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .screen::-webkit-scrollbar { display: none; }
+        .screen { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: var(--radius-full);
+            border: none;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-family);
+        }
+
+        .btn:active { transform: scale(0.97); }
+        .btn:focus { outline: 2px solid var(--accent-primary); outline-offset: 2px; }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--accent-primary);
+        }
+
+        .btn-danger {
+            background: #ff453a;
+            color: white;
+        }
+
+        .text-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .text-subtitle { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+        .text-body { font-size: 15px; color: var(--text-secondary); line-height: 1.5; }
+        .text-caption { font-size: 13px; color: var(--text-tertiary); }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 15px;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-tertiary);
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+            border: none;
+            background: none;
+            padding: 8px;
+        }
+
+        .nav-item:focus { outline: 2px solid var(--accent-primary); }
+        .nav-item.active { color: var(--text-primary); }
+        .nav-item svg { width: 26px; height: 26px; }
+
+        .hero-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #4a49b5, #6e6df0);
+            border: none;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(94, 92, 230, 0.3);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-family: var(--font-family);
+        }
+        .hero-button:active { transform: scale(0.95); box-shadow: 0 5px 15px rgba(94, 92, 230, 0.2); }
+        .hero-button:focus { outline: 3px solid var(--accent-warning); outline-offset: 4px; }
+
+        .slider-container { margin: 30px 0; }
+        .slider-value {
+            font-size: 48px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--accent-warning);
+            margin-bottom: 10px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: var(--bg-elevated);
+            border-radius: 4px;
+            outline: none;
+        }
+        input[type="range"]:focus { outline: 2px solid var(--accent-primary); }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .stroop-word {
+            font-size: 64px;
+            font-weight: 800;
+            text-align: center;
+            margin: 40px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .stroop-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .stroop-btn {
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 2px solid transparent;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-family);
+        }
+        .stroop-btn:active { transform: scale(0.95); }
+        .stroop-btn:focus { outline: 3px solid var(--accent-warning); }
+
+        .matrix-grid {
+            display: grid;
+            gap: 12px;
+            margin: 30px auto;
+            max-width: 300px;
+        }
+        .matrix-grid.size-3 { grid-template-columns: repeat(3, 1fr); }
+        .matrix-grid.size-4 { grid-template-columns: repeat(4, 1fr); }
+        .matrix-cell {
+            aspect-ratio: 1;
+            background: var(--bg-elevated);
+            border-radius: var(--radius-sm);
+            transition: all 0.5s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .matrix-cell:active { transform: scale(0.95); }
+        .matrix-cell:focus { outline: 2px solid var(--accent-warning); }
+        .matrix-cell.active { background: var(--accent-primary); }
+        .matrix-cell.fading { opacity: 0.2; }
+        .matrix-cell.correct { background: var(--accent-secondary); }
+        .matrix-cell.wrong { background: #ff453a; }
+
+        .breath-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(94, 92, 230, 0.4), transparent);
+            border: 2px solid var(--accent-primary);
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            transition: transform 4s ease-in-out;
+        }
+        .breath-circle.inhale { transform: scale(1.3); }
+        .breath-circle.exhale { transform: scale(0.8); }
+        
+        .hold-area {
+            margin-top: 20px;
+            padding: 40px;
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            border: 2px dashed var(--text-tertiary);
+            user-select: none;
+            transition: all 0.3s;
+        }
+        .hold-area.holding {
+            border-color: var(--accent-secondary);
+            background: rgba(52, 199, 89, 0.1);
+        }
+        .hold-area:focus { outline: 3px solid var(--accent-warning); }
+
+        .ledger-item {
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+            border-left: 3px solid var(--accent-primary);
+        }
+        .ledger-date { font-size: 12px; color: var(--text-tertiary); margin-bottom: 6px; }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-elevated);
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-primary);
+            transition: width 0.4s ease;
+        }
+
+        .escape-hatch {
+            background: var(--bg-elevated);
+            border: 1px solid var(--accent-warning);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .escape-hatch p {
+            color: var(--accent-warning);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .onboarding {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .onboarding.hidden { display: none; }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            margin-bottom: 12px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 30px;
+            background: var(--bg-elevated);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle.active { background: var(--accent-primary); }
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        .toggle.active::after { transform: translateX(20px); }
+
+        @media (max-width: 430px) {
+            .app-container { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="onboarding" id="onboarding">
+    <h1 class="text-title" style="margin-bottom: 20px;">Welcome to Friction</h1>
+    <p class="text-body" style="margin-bottom: 30px;">Addiction thrives on frictionless impulses. One tap to buy, one click to gamble, one swipe to scroll.</p>
+    <p class="text-body" style="margin-bottom: 30px;">Friction is the one app that puts the barrier back. When you feel an urge, you'll pass through four cognitive gates that give your brain the seconds it needs to catch up.</p>
+    <p class="text-body" style="margin-bottom: 40px; font-weight: 600;">No streaks. No scores. Just this moment.</p>
+    <button class="btn btn-primary" onclick="completeOnboarding()">I Understand</button>
+</div>
+
+<div class="app-container">
+
+    <div id="screen-home" class="screen active">
+        <div style="margin-top: 20px; text-align: center;">
+            <h1 class="text-title">Friction</h1>
+            <p class="text-body">Addiction is a frictionless slide.<br>Friction is the handrail.</p>
+        </div>
+
+        <button class="hero-button" onclick="startIntervention()" aria-label="Create Friction - Start intervention">
+            Create Friction
+        </button>
+
+        <div class="card" id="future-self-preview" style="display: none;">
+            <p class="text-caption" style="margin-bottom: 8px;">A NOTE FROM YOUR PAST SELF:</p>
+            <p class="text-body" id="preview-note-text" style="font-style: italic;"></p>
+        </div>
+
+        <div class="card" style="margin-top: auto; background: transparent; border: 1px solid var(--border-color); text-align: center;">
+            <p class="text-caption">No streaks. No scores. Just this moment.</p>
+        </div>
+    </div>
+
+    <div id="screen-gate1" class="screen">
+        <div class="progress-bar"><div class="progress-fill" style="width: 25%"></div></div>
+        <h2 class="text-title" style="font-size: 24px;">The Reality Check</h2>
+        <p class="text-body" style="margin-bottom: 20px;">If you give in right now, how much of your day will this consume? (The act, the recovery, the regret).</p>
+        
+        <div class="card">
+            <div class="slider-value"><span id="time-theft-val">3</span> Hours</div>
+            <div class="slider-container">
+                <input type="range" min="1" max="12" value="3" id="time-slider" oninput="updateTimeTheft()" aria-label="Time theft slider">
+            </div>
+            <p class="text-caption" style="text-align: center;">Slide to quantify the time theft.</p>
+        </div>
+
+        <p class="text-body" style="text-align: center; margin-bottom: 20px;" id="anchor-message">
+            You are about to trade <strong>3 hours</strong> of your life for 5 minutes of relief.
+        </p>
+
+        <button class="btn btn-primary" onclick="goToScreen('screen-gate2')">I refuse to trade my time. Let's create friction.</button>
+        <button class="btn btn-ghost" onclick="goToScreen('screen-home')" style="margin-top: 10px;">Cancel</button>
+    </div>
+
+    <div id="screen-gate2" class="screen">
+        <div class="progress-bar"><div class="progress-fill" style="width: 50%"></div></div>
+        <h2 class="text-title" style="font-size: 24px;">Sensory Override</h2>
+        <p class="text-body" style="margin-bottom: 10px;">Tap the <strong>COLOR</strong> of the text. Ignore the word.</p>
+        <p class="text-caption" style="margin-bottom: 20px;">Round <span id="stroop-round">1</span> of 5</p>
+
+        <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <div class="stroop-word" id="stroop-word" aria-live="polite">WAIT</div>
+            <div class="stroop-options" id="stroop-options" role="group" aria-label="Color options"></div>
+        </div>
+
+        <div class="escape-hatch" id="escape-hatch-2" style="display: none;">
+            <p>The cognitive load is too high right now. Let's just breathe.</p>
+            <button class="btn btn-secondary" onclick="skipToGate4()">Skip to Breathing</button>
+        </div>
+    </div>
+
+    <div id="screen-gate3" class="screen">
+        <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+        <h2 class="text-title" style="font-size: 24px;">The Decay Matrix</h2>
+        <p class="text-body" style="margin-bottom: 10px;">Remember the pattern. Watch how quickly things fade.</p>
+        <p class="text-caption" style="margin-bottom: 20px;">Round <span id="matrix-round">1</span> of 3</p>
+
+        <div class="card" style="flex: 1; display: flex; align-items: center; justify-content: center;">
+            <div class="matrix-grid size-3" id="matrix-grid" role="grid" aria-label="Memory matrix"></div>
+        </div>
+        <p class="text-caption" style="text-align: center; margin-top: 10px;">Just like the blocks, the urge will fade if you hold on.</p>
+
+        <div class="escape-hatch" id="escape-hatch-3" style="display: none;">
+            <p>The cognitive load is too high right now. Let's just breathe.</p>
+            <button class="btn btn-secondary" onclick="skipToGate4()">Skip to Breathing</button>
+        </div>
+    </div>
+
+    <div id="screen-gate4" class="screen">
+        <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
+        <h2 class="text-title" style="font-size: 24px;">Physical Grounding</h2>
+        <p class="text-body" style="margin-bottom: 20px;">Breathe with the circle. Keep your thumb on the screen for 3 full cycles.</p>
+
+        <div class="breath-circle" id="breath-circle">
+            <span id="breath-text">Hold</span>
+        </div>
+
+        <div class="hold-area" id="hold-area" tabindex="0" role="button" aria-label="Press and hold to breathe">
+            <p class="text-subtitle">Press and Hold</p>
+            <p class="text-caption">Don't let go until the circuit is broken.</p>
+        </div>
+    </div>
+
+    <div id="screen-success" class="screen">
+        <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center;">
+            <div style="font-size: 64px; margin-bottom: 20px;">🌊</div>
+            <h2 class="text-title">The wave has broken.</h2>
+            <p class="text-body" style="margin-bottom: 30px;">You didn't trade your day. You created friction. Take a deep breath. You are safe right now.</p>
+            
+            <div class="card" style="text-align: left;">
+                <p class="text-subtitle" style="margin-bottom: 10px;">Leave a note for the next time.</p>
+                <p class="text-caption" style="margin-bottom: 10px;">Your future self might need to read this.</p>
+                <textarea id="note-input" placeholder="What helped you get through this moment?" style="width: 100%; background: var(--bg-elevated); border: none; border-radius: 12px; padding: 12px; color: var(--text-primary); font-family: var(--font-family); font-size: 15px; resize: none; height: 80px; outline: none;" aria-label="Note to future self"></textarea>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="saveNoteAndReset()">Save Note & Return Home</button>
+    </div>
+
+    <div id="screen-ledger" class="screen">
+        <h2 class="text-title" style="margin-top: 10px;">Resilience Ledger</h2>
+        <p class="text-body" style="margin-bottom: 20px;">Interventions survived. Effort over perfection.</p>
+        <div id="ledger-list"></div>
+    </div>
+
+    <div id="screen-notes" class="screen">
+        <h2 class="text-title" style="margin-top: 10px;">Future Self Vault</h2>
+        <p class="text-body" style="margin-bottom: 20px;">Notes you wrote to yourself in moments of clarity.</p>
+        <div id="notes-list"></div>
+    </div>
+
+    <div id="screen-settings" class="screen">
+        <h2 class="text-title" style="margin-top: 10px;">Settings</h2>
+        
+        <div class="settings-item">
+            <div>
+                <p class="text-subtitle">Haptic Feedback</p>
+                <p class="text-caption">Vibration on interactions</p>
+            </div>
+            <div class="toggle active" id="haptic-toggle" onclick="toggleHaptic()" role="switch" aria-checked="true" tabindex="0"></div>
+        </div>
+
+        <div class="settings-item">
+            <div>
+                <p class="text-subtitle">Ambient Sound</p>
+                <p class="text-caption">Brown noise during intervention</p>
+            </div>
+            <div class="toggle" id="sound-toggle" onclick="toggleSound()" role="switch" aria-checked="false" tabindex="0"></div>
+        </div>
+
+        <div class="card" style="margin-top: 40px;">
+            <p class="text-subtitle" style="margin-bottom: 12px;">Data Management</p>
+            <p class="text-caption" style="margin-bottom: 16px;">All data is stored locally on your device. No cloud sync.</p>
+            <button class="btn btn-danger" onclick="clearAllData()">Clear All Data</button>
+        </div>
+
+        <div class="card" style="margin-top: 20px; text-align: center;">
+            <p class="text-caption">Friction v2.0</p>
+            <p class="text-caption">Addiction is a frictionless slide. Friction is the handrail.</p>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="goToScreen('screen-home', this)" aria-label="Home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" onclick="goToScreen('screen-ledger', this)" aria-label="Resilience Ledger">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            <span>Ledger</span>
+        </button>
+        <button class="nav-item" onclick="goToScreen('screen-notes', this)" aria-label="Future Self Notes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span>Notes</span>
+        </button>
+        <button class="nav-item" onclick="goToScreen('screen-settings', this)" aria-label="Settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Settings</span>
+        </button>
+    </div>
+
+</div>
+
+<script>
+    // ==========================================
+    // INDEXEDDB PERSISTENCE LAYER
+    // ==========================================
+    const DB_NAME = 'FrictionVaultDB';
+    const STORE_NAME = 'user_data';
+
+    const dbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (event) => {
+            if (!event.oldVersion) {
+                event.target.result.createObjectStore(STORE_NAME);
+            }
+        };
+    });
+
+    async function saveToVault(key, value) {
+        try {
+            const db = await dbPromise;
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(STORE_NAME, 'readwrite');
+                transaction.objectStore(STORE_NAME).put(value, key);
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = () => reject(transaction.error);
+            });
+        } catch (error) {
+            console.error('Failed to save to vault:', error);
+        }
+    }
+
+    async function getFromVault(key) {
+        try {
+            const db = await dbPromise;
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(STORE_NAME, 'readonly');
+                const request = transaction.objectStore(STORE_NAME).get(key);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error);
+            });
+        } catch (error) {
+            console.error('Failed to get from vault:', error);
+            return null;
+        }
+    }
+
+    // ==========================================
+    // SETTINGS & PREFERENCES
+    // ==========================================
+    let hapticEnabled = true;
+    let soundEnabled = false;
+
+    async function loadSettings() {
+        const settings = await getFromVault('settings');
+        if (settings) {
+            hapticEnabled = settings.haptic !== false;
+            soundEnabled = settings.sound === true;
+            updateToggleUI();
+        }
+    }
+
+    function updateToggleUI() {
+        const hapticToggle = document.getElementById('haptic-toggle');
+        const soundToggle = document.getElementById('sound-toggle');
+        
+        if (hapticEnabled) {
+            hapticToggle.classList.add('active');
+            hapticToggle.setAttribute('aria-checked', 'true');
+        } else {
+            hapticToggle.classList.remove('active');
+            hapticToggle.setAttribute('aria-checked', 'false');
+        }
+        
+        if (soundEnabled) {
+            soundToggle.classList.add('active');
+            soundToggle.setAttribute('aria-checked', 'true');
+        } else {
+            soundToggle.classList.remove('active');
+            soundToggle.setAttribute('aria-checked', 'false');
+        }
+    }
+
+    async function toggleHaptic() {
+        hapticEnabled = !hapticEnabled;
+        updateToggleUI();
+        await saveToVault('settings', { haptic: hapticEnabled, sound: soundEnabled });
+    }
+
+    async function toggleSound() {
+        soundEnabled = !soundEnabled;
+        updateToggleUI();
+        await saveToVault('settings', { haptic: hapticEnabled, sound: soundEnabled });
+    }
+
+    async function clearAllData() {
+        if (confirm('This will delete all your notes and ledger entries. This cannot be undone.')) {
+            try {
+                const db = await dbPromise;
+                const transaction = db.transaction(STORE_NAME, 'readwrite');
+                transaction.objectStore(STORE_NAME).clear();
+                transaction.oncomplete = () => {
+                    alert('All data cleared.');
+                    goToScreen('screen-home');
+                };
+            } catch (error) {
+                alert('Failed to clear data.');
+            }
+        }
+    }
+
+    // ==========================================
+    // ONBOARDING
+    // ==========================================
+    async function checkOnboarding() {
+        const onboarded = await getFromVault('onboarded');
+        if (onboarded) {
+            document.getElementById('onboarding').classList.add('hidden');
+        }
+    }
+
+    async function completeOnboarding() {
+        await saveToVault('onboarded', true);
+        document.getElementById('onboarding').classList.add('hidden');
+    }
+
+    // ==========================================
+    // STATE & NAVIGATION
+    // ==========================================
+    let currentStroopRound = 1;
+    let currentMatrixRound = 1;
+    let stroopFailures = 0;
+    let matrixFailures = 0;
+    let breathInterval = null;
+    let holdTimer = null;
+    let holdProgress = 0;
+    let graceTimeout = null;
+    let gridSize = 3;
+
+    function vibrate(pattern) {
+        if (hapticEnabled && navigator.vibrate) {
+            navigator.vibrate(pattern);
+        }
+    }
+
+    function goToScreen(screenId, navItem) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        
+        if (navItem) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            navItem.classList.add('active');
+        }
+
+        if (screenId === 'screen-gate2') initStroop();
+        if (screenId === 'screen-gate3') initMatrix();
+        if (screenId === 'screen-gate4') initGrounding();
+        if (screenId === 'screen-home') loadFutureSelfNote();
+        if (screenId === 'screen-notes') renderNotes();
+        if (screenId === 'screen-ledger') renderLedger();
+    }
+
+    function startIntervention() {
+        vibrate(10);
+        stroopFailures = 0;
+        matrixFailures = 0;
+        goToScreen('screen-gate1');
+    }
+
+    // ==========================================
+    // GATE 1: THE ANCHOR (TIME THEFT)
+    // ==========================================
+    function updateTimeTheft() {
+        const val = document.getElementById('time-slider').value;
+        document.getElementById('time-theft-val').innerText = val;
+        document.getElementById('anchor-message').innerHTML = `You are about to trade <strong>${val} hours</strong> of your life for 5 minutes of relief.`;
+    }
+
+    // ==========================================
+    // GATE 2: SENSORY OVERRIDE (STROOP)
+    // ==========================================
+    const stroopWords = ['DRINK', 'BUY', 'SPIN', 'CLICK', 'WAIT', 'BREATHE', 'STOP', 'PAUSE'];
+    const stroopColors = [
+        { name: 'RED', hex: '#ff453a' },
+        { name: 'BLUE', hex: '#0a84ff' },
+        { name: 'GREEN', hex: '#34c759' },
+        { name: 'YELLOW', hex: '#ff9f0a' }
+    ];
+
+    function initStroop() {
+        currentStroopRound = 1;
+        document.getElementById('escape-hatch-2').style.display = 'none';
+        generateStroopRound();
+    }
+
+    function generateStroopRound() {
+        document.getElementById('stroop-round').innerText = currentStroopRound;
+        
+        let word = stroopWords[Math.floor(Math.random() * stroopWords.length)];
+        let color = stroopColors[Math.floor(Math.random() * stroopColors.length)];
+        
+        while(word === color.name) {
+            word = stroopWords[Math.floor(Math.random() * stroopWords.length)];
+        }
+
+        const wordEl = document.getElementById('stroop-word');
+        wordEl.innerText = word;
+        wordEl.style.color = color.hex;
+
+        let options = [color];
+        while(options.length < 4) {
+            let opt = stroopColors[Math.floor(Math.random() * stroopColors.length)];
+            if (!options.find(o => o.name === opt.name)) options.push(opt);
+        }
+        
+        options.sort(() => Math.random() - 0.5);
+
+        const optionsEl = document.getElementById('stroop-options');
+        optionsEl.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'stroop-btn';
+            btn.innerText = opt.name;
+            btn.style.background = `${opt.hex}22`;
+            btn.style.color = opt.hex;
+            btn.style.borderColor = opt.hex;
+            btn.setAttribute('aria-label', `Color ${opt.name}`);
+            btn.onclick = () => checkStroop(opt.name === color.name);
+            optionsEl.appendChild(btn);
+        });
+    }
+
+    function checkStroop(isCorrect) {
+        vibrate(isCorrect ? 10 : 50);
+        if (isCorrect) {
+            currentStroopRound++;
+            if (currentStroopRound > 5) {
+                goToScreen('screen-gate3');
+            } else {
+                generateStroopRound();
+            }
+        } else {
+            stroopFailures++;
+            if (stroopFailures >= 2) {
+                document.getElementById('escape-hatch-2').style.display = 'block';
+            }
+            currentStroopRound = 1;
+            generateStroopRound();
+        }
+    }
+
+    // ==========================================
+    // GATE 3: DECAY MATRIX
+    // ==========================================
+    function initMatrix() {
+        currentMatrixRound = 1;
+        gridSize = 3;
+        document.getElementById('escape-hatch-3').style.display = 'none';
+        const grid = document.getElementById('matrix-grid');
+        grid.className = 'matrix-grid size-3';
+        grid.innerHTML = '';
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'matrix-cell';
+            cell.dataset.index = i;
+            cell.setAttribute('role', 'gridcell');
+            cell.setAttribute('tabindex', '0');
+            cell.onclick = () => checkMatrixCell(cell);
+            cell.onkeydown = (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    checkMatrixCell(cell);
+                }
+            };
+            grid.appendChild(cell);
+        }
+        startMatrixRound();
+    }
+
+    let matrixTargetCells = [];
+    let matrixSelectedCells = [];
+    let matrixStartTime = 0;
+
+    function startMatrixRound() {
+        document.getElementById('matrix-round').innerText = currentMatrixRound;
+        matrixSelectedCells = [];
+        const cells = document.querySelectorAll('.matrix-cell');
+        cells.forEach(c => {
+            c.className = 'matrix-cell';
+        });
+
+        const targetCount = gridSize === 3 ? 3 : 4;
+        matrixTargetCells = [];
+        while (matrixTargetCells.length < targetCount) {
+            let idx = Math.floor(Math.random() * (gridSize * gridSize));
+            if (!matrixTargetCells.includes(idx)) matrixTargetCells.push(idx);
+        }
+
+        matrixTargetCells.forEach(idx => {
+            cells[idx].classList.add('active');
+        });
+
+        matrixStartTime = Date.now();
+
+        setTimeout(() => {
+            matrixTargetCells.forEach(idx => {
+                cells[idx].classList.add('fading');
+                cells[idx].classList.remove('active');
+            });
+        }, 1000);
+    }
+
+    function checkMatrixCell(cell) {
+        const idx = parseInt(cell.dataset.index);
+        if (matrixSelectedCells.includes(idx)) return;
+
+        matrixSelectedCells.push(idx);
+        const targetCount = gridSize === 3 ? 3 : 4;
+
+        if (matrixTargetCells.includes(idx)) {
+            cell.classList.add('correct');
+            vibrate(10);
+            
+            if (matrixSelectedCells.length === targetCount) {
+                const elapsed = Date.now() - matrixStartTime;
+                
+                if (elapsed < 1500 && gridSize === 3) {
+                    gridSize = 4;
+                    const grid = document.getElementById('matrix-grid');
+                    grid.className = 'matrix-grid size-4';
+                    grid.innerHTML = '';
+                    for (let i = 0; i < 16; i++) {
+                        const newCell = document.createElement('div');
+                        newCell.className = 'matrix-cell';
+                        newCell.dataset.index = i;
+                        newCell.setAttribute('role', 'gridcell');
+                        newCell.setAttribute('tabindex', '0');
+                        newCell.onclick = () => checkMatrixCell(newCell);
+                        newCell.onkeydown = (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                checkMatrixCell(newCell);
+                            }
+                        };
+                        grid.appendChild(newCell);
+                    }
+                }
+                
+                currentMatrixRound++;
+                if (currentMatrixRound > 3) {
+                    setTimeout(() => goToScreen('screen-gate4'), 500);
+                } else {
+                    setTimeout(startMatrixRound, 800);
+                }
+            }
+        } else {
+            cell.classList.add('wrong');
+            vibrate(50);
+            matrixFailures++;
+            if (matrixFailures >= 2) {
+                document.getElementById('escape-hatch-3').style.display = 'block';
+            }
+            setTimeout(startMatrixRound, 800);
+        }
+    }
+
+    // ==========================================
+    // GATE 4: PHYSICAL GROUNDING (DEAD MAN'S SWITCH)
+    // ==========================================
+    function initGrounding() {
+        holdProgress = 0;
+        const circle = document.getElementById('breath-circle');
+        const text = document.getElementById('breath-text');
+        const holdArea = document.getElementById('hold-area');
+        
+        circle.className = 'breath-circle';
+        text.innerText = 'Hold';
+        holdArea.classList.remove('holding');
+
+        let isInhale = true;
+        breathInterval = setInterval(() => {
+            if (isInhale) {
+                circle.classList.add('inhale');
+                circle.classList.remove('exhale');
+                text.innerText = 'Breathe In';
+            } else {
+                circle.classList.remove('inhale');
+                circle.classList.add('exhale');
+                text.innerText = 'Breathe Out';
+            }
+            isInhale = !isInhale;
+        }, 4000);
+
+        const startHold = (e) => {
+            e.preventDefault();
+            holdArea.classList.add('holding');
+            vibrate(20);
+            
+            if (graceTimeout) {
+                clearTimeout(graceTimeout);
+                graceTimeout = null;
+            }
+            
+            holdTimer = setInterval(() => {
+                holdProgress += 0.1;
+                if (holdProgress >= 24) {
+                    clearInterval(holdTimer);
+                    clearInterval(breathInterval);
+                    vibrate([50, 50, 50]);
+                    completeIntervention();
+                }
+            }, 100);
+        };
+
+        const endHold = (e) => {
+            e.preventDefault();
+            holdArea.classList.remove('holding');
+            clearInterval(holdTimer);
+            holdTimer = null;
+            
+            graceTimeout = setTimeout(() => {
+                holdProgress = 0;
+            }, 500);
+        };
+
+        holdArea.onmousedown = startHold;
+        holdArea.onmouseup = endHold;
+        holdArea.onmouseleave = endHold;
+        holdArea.ontouchstart = startHold;
+        holdArea.ontouchend = endHold;
+        holdArea.onkeydown = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                startHold(e);
+            }
+        };
+        holdArea.onkeyup = (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                endHold(e);
+            }
+        };
+    }
+
+    function skipToGate4() {
+        goToScreen('screen-gate4');
+    }
+
+    // ==========================================
+    // SUCCESS & RESILIENCE LEDGER
+    // ==========================================
+    async function completeIntervention() {
+        const ledger = await getFromVault('resilience_ledger') || [];
+        ledger.unshift({
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            message: 'You successfully anchored your mind through a craving.'
+        });
+        await saveToVault('resilience_ledger', ledger);
+        goToScreen('screen-success');
+    }
+
+    async function saveNoteAndReset() {
+        const text = document.getElementById('note-input').value.trim();
+        if (text) {
+            let notes = await getFromVault('future_notes') || [];
+            notes.unshift({
+                text: text,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+            });
+            await saveToVault('future_notes', notes);
+        }
+        document.getElementById('note-input').value = '';
+        goToScreen('screen-home');
+    }
+
+    async function renderNotes() {
+        const notes = await getFromVault('future_notes') || [];
+        const list = document.getElementById('notes-list');
+        
+        if (notes.length === 0) {
+            list.innerHTML = '<p class="text-body" style="text-align:center; margin-top:40px;">No notes yet. You\'ll write one after your next intervention.</p>';
+            return;
+        }
+
+        list.innerHTML = notes.map(n => `
+            <div class="card">
+                <div class="ledger-date">${n.date}</div>
+                <div class="text-body">${n.text}</div>
+            </div>
+        `).join('');
+    }
+
+    async function renderLedger() {
+        const ledger = await getFromVault('resilience_ledger') || [];
+        const list = document.getElementById('ledger-list');
+        
+        if (ledger.length === 0) {
+            list.innerHTML = '<p class="text-body" style="text-align:center; margin-top:40px;">No interventions yet. Complete the full pipeline to log your first entry.</p>';
+            return;
+        }
+
+        list.innerHTML = ledger.map(entry => `
+            <div class="ledger-item">
+                <div class="ledger-date">${entry.date}</div>
+                <div class="text-body">${entry.message}</div>
+            </div>
+        `).join('');
+    }
+
+    async function loadFutureSelfNote() {
+        const notes = await getFromVault('future_notes') || [];
+        const preview = document.getElementById('future-self-preview');
+        
+        if (notes.length > 0) {
+            const randomNote = notes[Math.floor(Math.random() * notes.length)];
+            document.getElementById('preview-note-text').innerText = `"${randomNote.text}"`;
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
+    checkOnboarding();
+    loadSettings();
+    loadFutureSelfNote();
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            console.log('Service Worker registered:', reg);
+        }).catch(err => {
+            console.log('Service Worker registration failed:', err);
+        });
+    }
+</script>
+</body>
+</html>

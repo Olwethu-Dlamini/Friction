@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friction - Product Specification</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.8;
+            color: #1d1d1f;
+            background: #f5f5f7;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 2px solid #e5e5e7;
+        }
+
+        h1 {
+            font-size: 56px;
+            font-weight: 700;
+            color: #5e5ce6;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .version-badge {
+            display: inline-block;
+            background: #ff9f0a;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .tagline {
+            font-size: 22px;
+            color: #6e6e73;
+            font-weight: 400;
+            font-style: italic;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-top: 56px;
+            margin-bottom: 24px;
+            color: #1d1d1f;
+            border-left: 4px solid #5e5ce6;
+            padding-left: 16px;
+        }
+
+        h3 {
+            font-size: 22px;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            color: #5e5ce6;
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: #1d1d1f;
+            font-weight: 600;
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: #f0f0ff;
+            border-left: 4px solid #5e5ce6;
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .critique-box {
+            background: #fff5f5;
+            border-left: 4px solid #ff453a;
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .critique-box h4 {
+            color: #ff453a;
+            margin-top: 0;
+        }
+
+        .fix-box {
+            background: #f0fff4;
+            border-left: 4px solid #34c759;
+            padding: 20px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .fix-box h4 {
+            color: #34c759;
+            margin-top: 0;
+        }
+
+        .gate-section {
+            background: #fafafa;
+            padding: 32px;
+            margin: 32px 0;
+            border-radius: 12px;
+            border: 1px solid #e5e5e7;
+        }
+
+        .gate-number {
+            display: inline-block;
+            background: #5e5ce6;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 700;
+            font-size: 20px;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+
+        .upgrade-tag {
+            display: inline-block;
+            background: #34c759;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "SF Mono", Monaco, monospace;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #e5e5e7;
+        }
+
+        th {
+            background: #f5f5f7;
+            font-weight: 600;
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #5e5ce6, #7d7af0);
+            color: white;
+            padding: 40px;
+            border-radius: 16px;
+            margin: 48px 0;
+            text-align: center;
+        }
+
+        .summary-box h3 {
+            color: white;
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .name-rationale {
+            background: #fefce8;
+            border-left: 4px solid #f59e0b;
+            padding: 24px;
+            margin: 24px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .name-rationale h4 {
+            color: #b45309;
+            margin-top: 0;
+        }
+
+        .color-swatch {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-right: 8px;
+            border: 1px solid #e5e5e7;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid #e5e5e7;
+            text-align: center;
+            color: #6e6e73;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 30px 20px; }
+            h1 { font-size: 40px; }
+            h2 { font-size: 26px; }
+            h3 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="version-badge">V2.0: Post-Critique Evolution</div>
+            <h1>Friction</h1>
+            <p class="tagline">"Addiction thrives on frictionless impulses. Friction introduces deliberate cognitive speed bumps to break the loop."</p>
+        </header>
+
+        <section>
+            <h2>Why the Name "Friction"</h2>
+
+            <div class="name-rationale">
+                <h4>The Naming Rationale</h4>
+                <p>The name <strong>Friction</strong> describes the exact UX philosophy of the application. Modern addiction is enabled by <em>frictionless design</em>: one-tap purchases, infinite scroll, auto-play, instant access. The app's sole purpose is to reintroduce deliberate, cognitive friction into that seamless loop.</p>
+                <ul>
+                    <li><strong>Not a passive word</strong> — Unlike "Pause" or "Calm," Friction is active and intentional. It implies a force being applied against momentum.</li>
+                    <li><strong>Immediately honest</strong> — The app tells the user upfront: "This is going to be hard. That's the point."</li>
+                    <li><strong>Design-forward</strong> — Friction is a term used in UX, physics, and behavioral psychology. It signals that this is a tool built with intentionality, not a generic wellness app.</li>
+                    <li><strong>Unique in app stores</strong> — No existing recovery, meditation, or wellness app uses this name.</li>
+                </ul>
+                <p><strong>The elevator pitch in one sentence:</strong> "Addiction is a frictionless slide. Friction is the handrail."</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Executive Summary & Intellectual Honesty</h2>
+            <p><strong>Friction</strong> is an adaptive, zero-barrier progressive web application designed to interrupt addictive impulses in real-time. It operates on a fundamentally different psychological principle than traditional recovery apps: it does not track "days clean," because perfection is an illusion that leads to the "shame spiral."</p>
+
+            <h3>Psychological Foundations (The "Copycat" Verdict)</h3>
+            <p>We must be intellectually honest: Friction did not invent the psychology of addiction. The critique of gamified streaks is based on the <strong>Abstinence Violation Effect (AVE)</strong>, identified by psychologist Alan Marlatt in 1985. The cognitive gates are based on established CBT (Cognitive Behavioral Theory) frameworks like the Stroop Effect and visuospatial working memory taxation.</p>
+
+            <div class="highlight">
+                <strong>Our Innovation:</strong> We are not claiming to invent the psychology. Our innovation is building a UI that actually <em>respects</em> these established frameworks, rather than exploiting them for Daily Active User (DAU) retention metrics. We are replacing the toxic "streak" with an "intervention ledger."
+            </div>
+        </section>
+
+        <section>
+            <h2>The Problem: The Shame Spiral</h2>
+            <p>Most addiction recovery applications use gamification mechanics: streak counters, badges, and "days clean" trackers. While these drive app engagement, they create a critical psychological vulnerability:</p>
+
+            <ol>
+                <li>User maintains a 47-day streak.</li>
+                <li>User experiences a craving and relapses on day 48.</li>
+                <li>The app displays: "Streak broken: 0 days."</li>
+                <li>User experiences intense shame (The Abstinence Violation Effect).</li>
+                <li>Shame triggers a binge: "I already ruined my streak, might as well go all the way."</li>
+                <li>User abandons the app entirely.</li>
+            </ol>
+            <p>The very tool meant to support recovery becomes a source of trauma when the inevitable slip occurs.</p>
+
+            <h3>The Deeper Problem: Frictionless Design Enables Addiction</h3>
+            <p>Modern digital products are engineered to remove every possible barrier between impulse and action. One-tap buying, auto-play video, saved payment methods, infinite scroll. Addiction thrives in environments where there is zero resistance between the urge and the act.</p>
+            <p>Friction exists to be the one app on your phone that <strong>adds resistance back</strong>—not to punish you, but to give your prefrontal cortex the seconds it needs to catch up with your amygdala.</p>
+        </section>
+
+        <section>
+            <h2>The Solution: The Adaptive 4-Gate System</h2>
+            <p>When a user feels an urge, they tap a single button and enter a sequential pipeline of cognitive and physical challenges. However, <strong>these are not games to win; they are speed bumps to delay.</strong> If a user is too panicked to engage, the app adapts.</p>
+
+            <div class="gate-section">
+                <h3><span class="gate-number">1</span> The Reality Anchor (Time Theft)</h3>
+
+                <h4>Objective</h4>
+                <p>Shift the brain from emotional craving to logical cost-benefit analysis.</p>
+
+                <h4>How It Works</h4>
+                <p>The user sees a tactile slider and is asked: <em>"If you give in right now, how much of your day will this consume?"</em> The range is 1 to 12 hours. The user slides to quantify the "time theft."</p>
+                <p>The app then displays a reality check: <em>"You are about to trade X hours of your life for 5 minutes of relief."</em></p>
+
+                <h4>Why Time Instead of Money?</h4>
+                <ul>
+                    <li>Money can feel abstract or guilt-inducing</li>
+                    <li>Time is universally understood and finite</li>
+                    <li>Everyone has the same 24 hours</li>
+                    <li>Time theft applies to all addictions (gambling, drinking, shopping, doomscrolling)</li>
+                    <li>No cumulative tracking means no shame when broken</li>
+                </ul>
+
+                <h4>Psychological Basis</h4>
+                <p>Addiction operates on immediate gratification. The brain focuses entirely on short-term relief, ignoring consequences. This gate forces the user to confront the immediate cost in concrete terms, shifting the brain from emotional craving to logical evaluation.</p>
+
+                <h4>Example Scenarios</h4>
+                <ul>
+                    <li><strong>Drinker:</strong> "Half a day" (the act, the hangover, the lost productivity)</li>
+                    <li><strong>Gambler:</strong> "The whole weekend" (the binge, the recovery, the financial stress)</li>
+                    <li><strong>Doomscroller:</strong> "3 hours of sleep" (the lost rest, the next-day fatigue)</li>
+                    <li><strong>Shopper:</strong> "4 hours" (the browsing, the purchase, the buyer's remorse)</li>
+                </ul>
+            </div>
+
+            <div class="gate-section">
+                <h3><span class="gate-number">2</span> Sensory Override (Stroop Effect) <span class="upgrade-tag">Upgraded</span></h3>
+
+                <h4>Objective</h4>
+                <p>Create severe cognitive interference that forces the prefrontal cortex to override the amygdala.</p>
+
+                <div class="critique-box">
+                    <h4>The Critique:</h4>
+                    <p>"Forcing a panicking user to play matching games will just make them want to throw their phone. Once they learn the pattern, the cognitive friction drops to zero and the craving slips right past."</p>
+                </div>
+
+                <div class="fix-box">
+                    <h4>The Fix: Adaptive Fatigue Engine</h4>
+                    <p>We inject algorithmic randomness to prevent muscle memory. The physical location of the color buttons is <strong>randomly shuffled on every single round</strong>. The user cannot rely on spatial memory; they must actively process the sensory conflict every time.</p>
+                </div>
+
+                <h4>How It Works</h4>
+                <ol>
+                    <li>A large word appears on screen (e.g., "DRINK", "BUY", "WAIT", "BREATHE")</li>
+                    <li>The word is colored (Red, Blue, Green, or Yellow)</li>
+                    <li>Four color buttons appear below in randomized positions</li>
+                    <li>User must tap the <strong>COLOR</strong> of the text, not the word</li>
+                    <li>Must complete 5 rounds correctly</li>
+                    <li>Incorrect answer resets to round 1</li>
+                </ol>
+
+                <h4>Psychological Basis</h4>
+                <p>The Stroop Effect is a well-documented psychological phenomenon where naming the color of a word is slower and more error-prone when the word spells a different color. This creates cognitive interference that requires executive function to resolve. Cravings activate the amygdala; the Stroop task requires the prefrontal cortex. The brain cannot maintain intense craving while solving cognitive interference.</p>
+
+                <h4>Accessibility Considerations</h4>
+                <ul>
+                    <li>High contrast colors</li>
+                    <li>Large tap targets (minimum 44x44px)</li>
+                    <li>Clear visual feedback</li>
+                    <li>No time pressure (user can take as long as needed)</li>
+                </ul>
+            </div>
+
+            <div class="gate-section">
+                <h3><span class="gate-number">3</span> Decay Matrix (Working Memory) <span class="upgrade-tag">Upgraded</span></h3>
+
+                <h4>Objective</h4>
+                <p>Engage visuospatial working memory while visually demonstrating that urges fade over time.</p>
+
+                <div class="critique-box">
+                    <h4>The Critique:</h4>
+                    <p>"Playing the exact same memory puzzle creates a predictive pattern. The brain learns it, and the craving slips past."</p>
+                </div>
+
+                <div class="fix-box">
+                    <h4>The Fix: Dynamic Sizing</h4>
+                    <p>The grid starts at 3x3. If the user's input speed is incredibly fast (indicating the cognitive load isn't high enough to block the craving), the app <strong>dynamically scales the grid up to 4x4</strong> to keep the visuospatial working memory entirely occupied until the craving peak passes.</p>
+                </div>
+
+                <h4>How It Works</h4>
+                <ol>
+                    <li>A 3x3 grid of blocks appears</li>
+                    <li>Three random blocks light up (solid color)</li>
+                    <li>After 1 second, blocks begin to <strong>fade</strong> (not disappear instantly)</li>
+                    <li>Over 2 seconds, blocks gradually become transparent</li>
+                    <li>User must tap the blocks that lit up</li>
+                    <li>Must complete 3 rounds correctly</li>
+                    <li>Incorrect answer resets to round 1</li>
+                </ol>
+
+                <h4>The Decay Metaphor</h4>
+                <p>Blocks don't just vanish—they slowly fade from 100% opacity to 20% opacity. The user must hold the spatial pattern in memory as visual cues degrade. This mimics how cravings work: the intensity fades if you don't act on them. Just as the blocks dissolve, so does the urge.</p>
+
+                <h4>Psychological Basis</h4>
+                <p>Working memory is the brain's ability to hold and manipulate information over short periods. By taxing this system, we further distract from the craving. Urges follow a wave pattern: they peak, then fade. Most people don't realize this—they think the craving will last forever. Visualizing the decay reinforces the truth: "This will pass if I wait."</p>
+            </div>
+
+            <div class="gate-section">
+                <h3><span class="gate-number">4</span> Physical Grounding (Breath & Hold) <span class="upgrade-tag">Upgraded</span></h3>
+
+                <h4>Objective</h4>
+                <p>Activate the parasympathetic nervous system and transition the brain from high-beta (panic/craving) to alpha (calm/focus) waves.</p>
+
+                <div class="critique-box">
+                    <h4>The Critique:</h4>
+                    <p>"Sweaty hands or physical tremors during a craving will cause a user to lift their thumb at second 22, resetting the timer to 0 and inducing pure rage."</p>
+                </div>
+
+                <div class="fix-box">
+                    <h4>The Fix: The "Dead Man's Switch" (Grace Period)</h4>
+                    <p>We introduce a <strong>500ms grace window</strong> on the <code>pointerup</code> event. If their thumb slips, they have half a second to press it back down before the timer resets. This prevents physical tremors from causing a rage-quit.</p>
+                </div>
+
+                <h4>How It Works</h4>
+                <ol>
+                    <li>A large circle appears, expanding and contracting</li>
+                    <li>Text alternates: "Breathe In" (4 seconds) and "Breathe Out" (4 seconds)</li>
+                    <li>User must press and hold a designated area on screen</li>
+                    <li>Must maintain hold for 3 full breath cycles (24 seconds total)</li>
+                    <li>If user releases early, they have a 500ms grace period to re-engage</li>
+                    <li>If the grace period expires, progress resets to 0</li>
+                    <li>Upon completion, user proceeds to the success screen</li>
+                </ol>
+
+                <h4>Psychological Basis</h4>
+                <p>Controlled breathing is one of the fastest ways to shift the autonomic nervous system from sympathetic (fight-or-flight) to parasympathetic (rest-and-digest). Cravings trigger physical symptoms: rapid heart rate, shallow breathing, tension. Controlled breathing directly counteracts these symptoms. The "hold" requirement prevents the user from closing the app. Physical grounding brings the user back to their body and the present moment.</p>
+            </div>
+
+            <div class="highlight">
+                <h4>Crucial Addition: The "Escape Hatch"</h4>
+                <p>If a user fails Gate 2 or Gate 3 more than twice, the app immediately recognizes that their cognitive load is too high for structured tasks. It displays: <em>"The cognitive load is too high right now. Let's just breathe."</em> and <strong>skips them directly to Gate 4</strong>. You cannot "lose" Friction; the app adapts to your panic level. These are not games to win—they are speed bumps to delay.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>The Resilience Ledger (The Anti-Streak)</h2>
+
+            <div class="critique-box">
+                <h4>The Critique:</h4>
+                <p>"By completely stripping out progression, you built an app designed to be forgotten. There is zero mechanism keeping a user engaged long-term."</p>
+            </div>
+
+            <div class="fix-box">
+                <h4>The Fix: Micro-Logs (The Resilience Ledger)</h4>
+                <p>We do not track "Days Clean" (which causes the shame spiral). Instead, we track <strong>"Interventions Survived."</strong> Every time a user completes the pipeline, we log a timestamped entry:</p>
+                <ul>
+                    <li><em>"June 22: You successfully anchored your mind through a severe afternoon craving."</em></li>
+                    <li><em>"June 18: You chose to preserve 4 hours of your life instead of succumbing to a short-term impulse."</em></li>
+                    <li><em>"June 15: You overrode a late-night urge using the full Friction pipeline."</em></li>
+                </ul>
+                <p><strong>Why this works for retention:</strong> It rewards <em>effort</em> (using the app during a crisis) rather than <em>perfection</em> (never having a crisis). When a user opens the app, they don't see a fragile "47-day streak" they are terrified of breaking. They see a ledger of 15 times they successfully fought off the urge. It proves they have the strength to do it a 16th time.</p>
+            </div>
+
+            <h3>The Future Self Vault</h3>
+            <p>After each successful intervention, the user can write a note to their future self. When they open the app during a future crisis, a random past note appears before they even tap the button: <em>"You beat it on Tuesday. You can do it right now."</em></p>
+            <p>This replaces the dopamine hit of a streak badge with the emotional anchor of self-compassion.</p>
+        </section>
+
+        <section>
+            <h2>The Zero-Score Dashboard</h2>
+            <p>The home screen is intentionally minimalist and contains:</p>
+            <ul>
+                <li>No streaks</li>
+                <li>No calendars</li>
+                <li>No "days clean" counters</li>
+                <li>No money saved metrics</li>
+                <li>No progress graphs</li>
+            </ul>
+            <p>Instead, it features:</p>
+            <ul>
+                <li>A single, tactile "Create Friction" button</li>
+                <li>A random "Future Self" note from a past moment of clarity</li>
+                <li>A subtle entry point to the Resilience Ledger</li>
+                <li>A calming, social-media-inspired dark mode interface</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Technical Architecture</h2>
+
+            <div class="critique-box">
+                <h4>The Critique:</h4>
+                <p>"Marketing localStorage as a privacy feature is a dev shortcut. iOS will aggressively wipe local storage cache after a period of inactivity, and the user's deeply personal notes vanish forever."</p>
+            </div>
+
+            <div class="fix-box">
+                <h4>The Fix: Upgrading to IndexedDB</h4>
+                <p>We use <strong>IndexedDB</strong> for the Future Self Vault and Resilience Ledger. IndexedDB is treated as "persistent" storage by mobile operating systems. It is significantly harder for iOS or Android to silently nuke during a background cache cleanup, ensuring users' private notes survive long-term.</p>
+            </div>
+
+            <h3>Core Stack</h3>
+            <ul>
+                <li><strong>Frontend:</strong> HTML5, CSS3, Vanilla JavaScript (ES6+)</li>
+                <li><strong>Storage:</strong> Native IndexedDB (via zero-dependency wrapper)</li>
+                <li><strong>No backend required:</strong> 100% client-side, offline-first PWA</li>
+                <li><strong>Hardware APIs:</strong> Vibration API (haptics), Web Audio API (ambient sound), Pointer Events (touch/hold detection)</li>
+            </ul>
+
+            <h3>Why No Framework?</h3>
+            <ul>
+                <li>Zero build step required</li>
+                <li>Instant deployment</li>
+                <li>No dependency vulnerabilities</li>
+                <li>Faster load times</li>
+                <li>No server failures during critical moments</li>
+                <li>Works offline in airplane mode, in a bathroom, in a parking lot—wherever the craving hits</li>
+            </ul>
+
+            <h3>PWA Features</h3>
+            <ul>
+                <li>Service Worker (offline caching of all assets)</li>
+                <li>Web App Manifest (installable to home screen)</li>
+                <li>Responsive design (mobile-first, max-width 430px)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>UI/UX Design Philosophy</h2>
+            <p><strong>"Social Media Familiarity, Therapeutic Calm"</strong></p>
+            <p>The interface borrows the clean, modern aesthetics of Instagram, TikTok, and X (Twitter) to ensure instant familiarity. Users don't have to "learn" how to use the app—it works like apps they already use daily. However, the color palette is deliberately calming to create a safe, non-judgmental space.</p>
+
+            <h3>Color Palette</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Role</th>
+                        <th>Color</th>
+                        <th>Rationale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Background Primary</td>
+                        <td><span class="color-swatch" style="background:#000000;"></span> <code>#000000</code></td>
+                        <td>Pure black. Reduces eye strain in crisis moments.</td>
+                    </tr>
+                    <tr>
+                        <td>Background Card</td>
+                        <td><span class="color-swatch" style="background:#1c1c1e;"></span> <code>#1c1c1e</code></td>
+                        <td>Dark gray for elevated surfaces.</td>
+                    </tr>
+                    <tr>
+                        <td>Accent Primary</td>
+                        <td><span class="color-swatch" style="background:#5e5ce6;"></span> <code>#5e5ce6</code></td>
+                        <td>Soft indigo. Calming, introspective, not alarming.</td>
+                    </tr>
+                    <tr>
+                        <td>Accent Success</td>
+                        <td><span class="color-swatch" style="background:#34c759;"></span> <code>#34c759</code></td>
+                        <td>Muted green. Growth, success without being garish.</td>
+                    </tr>
+                    <tr>
+                        <td>Accent Warning</td>
+                        <td><span class="color-swatch" style="background:#ff9f0a;"></span> <code>#ff9f0a</code></td>
+                        <td>Soft amber. Attention without panic.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight">
+                <strong>Why No Red?</strong> Red triggers anxiety and urgency. In an app designed to de-escalate panic, red has no place. Even "error" states use amber or muted tones.
+            </div>
+
+            <h3>Typography</h3>
+            <p>System fonts only: <code>-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif</code></p>
+            <ul>
+                <li>Instant load (no web font requests)</li>
+                <li>Native feel on every device</li>
+                <li>Respects user's accessibility font size settings</li>
+            </ul>
+
+            <h3>Design Rules</h3>
+            <ul>
+                <li>No bright colors or confetti</li>
+                <li>No "Level Up" or "You Win" text</li>
+                <li>No sound effects for success</li>
+                <li>No gamification elements</li>
+                <li>No "Game Over" states—failed gates simply reset</li>
+                <li>Escape hatches always visible</li>
+                <li>Feels like a medical device, not a mobile game</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Advantages</h2>
+
+            <h3>1. Psychological Validity</h3>
+            <ul>
+                <li>Based on proven CBT techniques (Stroop effect, working memory taxation, controlled breathing)</li>
+                <li>Addresses the Abstinence Violation Effect by eliminating streaks entirely</li>
+                <li>Universal applicability (works for gambling, drinking, shopping, doomscrolling, substance use)</li>
+                <li>The Resilience Ledger rewards effort over perfection</li>
+            </ul>
+
+            <h3>2. Technical Reliability</h3>
+            <ul>
+                <li>100% client-side (no server failures)</li>
+                <li>Offline capable (works without internet)</li>
+                <li>IndexedDB storage (survives iOS cache sweeps)</li>
+                <li>Instant load times (no API calls, no frameworks)</li>
+                <li>Bulletproof live demo for hackathons</li>
+            </ul>
+
+            <h3>3. User Experience</h3>
+            <ul>
+                <li>Familiar social media interface (zero learning curve)</li>
+                <li>Calming, non-judgmental design</li>
+                <li>Escape hatches prevent frustration-induced rage-quits</li>
+                <li>500ms grace period on physical interactions</li>
+                <li>Adaptive difficulty prevents cognitive habituation</li>
+            </ul>
+
+            <h3>4. Development Efficiency</h3>
+            <ul>
+                <li>No backend complexity</li>
+                <li>No database provisioning</li>
+                <li>No authentication system</li>
+                <li>No ongoing server costs</li>
+                <li>Can be built and polished in 3 days</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Disadvantages & Mitigations</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Disadvantage</th>
+                        <th>Risk</th>
+                        <th>Mitigation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>"How do I track long-term progress?"</strong></td>
+                        <td>Users may want to see improvement over time</td>
+                        <td>The Resilience Ledger provides qualitative progress tracking: "Interventions Survived" rather than "Days Clean." Long-term clinical progress is tracked by therapists and journals. Friction is an emergency brake, not a fitness tracker.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>"The gates feel like a game"</strong></td>
+                        <td>Users might not take intervention seriously</td>
+                        <td>Strict UI rules: no bright colors, no confetti, no "level up" text. Clinical, calm typography. No sound effects for winning. The app feels like a medical device.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>"What if I fail a gate?"</strong></td>
+                        <td>Users might get frustrated and close the app</td>
+                        <td>No "game over" state. Failed gates reset to round 1. After 2 failures, the Escape Hatch skips to Gate 4 (breathing). The app adapts to panic level.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>"PWA installation is confusing on iOS"</strong></td>
+                        <td>Users might not know how to install</td>
+                        <td>App works perfectly in-browser with no installation required. The "Add to Home Screen" prompt only appears after the first successful intervention. The in-browser fallback is seamless.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>"The time theft input feels arbitrary"</strong></td>
+                        <td>Users might not know how to quantify time cost</td>
+                        <td>The act of estimating itself is the intervention—it forces logical thinking. Any estimate is valid. Example scenarios are provided during first launch onboarding.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>"Data is trapped on one device"</strong></td>
+                        <td>User gets a new phone and loses their notes</td>
+                        <td>IndexedDB persists through cache sweeps. Future versions can add an optional end-to-end encrypted export feature for backup.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Implementation Roadmap</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Focus Area</th>
+                        <th>Key Deliverables</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td>Core Shell & IndexedDB</td>
+                        <td>HTML skeleton, CSS variables, screen transition system, native IndexedDB wrapper for the Vault and Ledger.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td>Gate 1 & Gate 2 (Adaptive)</td>
+                        <td>Time theft slider with dynamic messaging. Stroop effect with randomized button position shuffling on every round.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td>Gate 3 & Gate 4 (Physical)</td>
+                        <td>Decay matrix with dynamic 3x3 to 4x4 scaling based on input speed. Breathing hold with 500ms Dead Man's Switch grace period.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4</strong></td>
+                        <td>Escape Hatch & Resilience Ledger</td>
+                        <td>Logic to skip to Gate 4 after 2 cognitive failures. Micro-Log timeline UI for "Interventions Survived." Future Self note system.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5</strong></td>
+                        <td>PWA & Polish</td>
+                        <td>Service worker for offline caching, Web App Manifest, haptic feedback tuning, accessibility audit, performance testing.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Hackathon Presentation Strategy</h2>
+
+            <h3>The Pitch (3 Minutes)</h3>
+
+            <h4>Opening (30 seconds):</h4>
+            <div class="highlight">
+                "Addiction is a frictionless slide. One tap to buy, one click to gamble, one swipe to scroll. Every app on your phone is designed to remove the barrier between impulse and action. We built the one app that puts the barrier back."
+            </div>
+
+            <h4>Problem (30 seconds):</h4>
+            <p>"Recovery apps use gamification: streaks, badges, 'days clean' counters. But psychology tells us that breaking a 47-day streak causes shame, and shame causes relapse. The very tool meant to help becomes a source of trauma."</p>
+
+            <h4>Solution (60 seconds):</h4>
+            <p>"Friction is different. It's not a tracker. It's an emergency brake. When you feel an urge, you tap one button and enter four cognitive gates that literally override the impulse. No streaks. No scores. Just deliberate speed bumps that give your brain the seconds it needs to catch up."</p>
+
+            <h4>Demo (60 seconds):</h4>
+            <p><em>[Hand phone to judge]</em> "Try it. Feel an urge? Tap the button. First, quantify how much of your day this will steal. Now, override your senses with the Stroop effect—notice how the buttons shuffle every round so you can't rely on muscle memory. Watch the urges fade in the decay matrix. Finally, ground yourself with breathing—notice how the app forgives a slipped thumb instead of punishing you. You just created friction."</p>
+
+            <h4>Close (30 seconds):</h4>
+            <div class="highlight">
+                "Friction works for any addiction because it doesn't track the addiction—it interrupts the impulse. It's built with zero backend, IndexedDB storage, and adaptive cognitive gates. Addiction thrives on frictionless design. Friction is the handrail."
+            </div>
+
+            <h3>Demo Tips</h3>
+            <ol>
+                <li><strong>Start with the philosophy:</strong> Attack frictionless design and the shame spiral first</li>
+                <li><strong>Make it interactive:</strong> Hand the phone to a judge and let them experience the Stroop shuffle</li>
+                <li><strong>Explain the science:</strong> Briefly mention AVE, Stroop effect, working memory, parasympathetic activation</li>
+                <li><strong>Emphasize reliability:</strong> "No server, no API, no failure points. Works offline in airplane mode."</li>
+                <li><strong>End with the metaphor:</strong> "Addiction is a frictionless slide. Friction is the handrail."</li>
+            </ol>
+        </section>
+
+        <div class="summary-box">
+            <h3>Friction V2.0: Ready for Development</h3>
+            <p style="font-size: 18px; margin: 0; opacity: 0.9;">
+                By absorbing harsh critiques, Friction has evolved from a clever concept into a clinically sound, technically robust, and psychologically safe product. It adapts to the user's panic level, protects their data from OS cache-wipes via IndexedDB, and tracks their resilience without punishing their slips.
+            </p>
+            <p style="font-size: 24px; font-weight: 700; margin: 24px 0 0 0;">
+                Addiction is a frictionless slide.<br>Friction is the handrail.
+            </p>
+        </div>
+
+        <footer>
+            <p><strong>Friction V2.0</strong> - Product Specification Document</p>
+            <p>Ready for Development</p>
+        </footer>
+    </div>
+</body>
+</html>
