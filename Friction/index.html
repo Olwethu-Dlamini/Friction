@@ -49,13 +49,17 @@
             display: flex;
             justify-content: center;
             min-height: 100vh;
+            min-height: 100dvh;
             overflow: hidden;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         .app-container {
             width: 100%;
             max-width: 430px;
             height: 100vh;
+            height: 100dvh;
             background-color: var(--bg-primary);
             position: relative;
             display: flex;
@@ -78,6 +82,10 @@
             transition: opacity 0.4s ease, transform 0.4s ease;
             display: flex;
             flex-direction: column;
+        }
+
+        .screen.no-nav {
+            padding-bottom: 20px;
         }
 
         .screen.active {
@@ -107,6 +115,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             font-family: var(--font-family);
+            touch-action: manipulation;
         }
 
         .btn:active { transform: scale(0.97); }
@@ -243,17 +252,18 @@
             cursor: pointer;
             transition: all 0.2s;
             font-family: var(--font-family);
+            touch-action: manipulation;
         }
         .stroop-btn:active { transform: scale(0.95); }
         .stroop-btn:focus { outline: 3px solid var(--accent-warning); }
 
         .matrix-grid {
             display: grid;
-            gap: 16px;
-            margin: 30px auto;
+            gap: 10px;
+            margin: 20px auto;
             width: 100%;
-            max-width: 400px;
-            padding: 20px;
+            max-width: 320px;
+            padding: 10px;
         }
         .matrix-grid.size-3 { grid-template-columns: repeat(3, 1fr); }
         .matrix-grid.size-4 { grid-template-columns: repeat(4, 1fr); }
@@ -266,8 +276,8 @@
             transition: all 0.5s ease;
             cursor: pointer;
             border: 3px solid transparent;
-            min-height: 80px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            touch-action: manipulation;
         }
         .matrix-cell:active { transform: scale(0.95); }
         .matrix-cell:focus { outline: 3px solid var(--accent-warning); }
@@ -301,10 +311,19 @@
             justify-content: center;
             font-size: 24px;
             font-weight: 600;
-            transition: transform 4s ease-in-out;
+            transition: transform 4s ease-in-out, box-shadow 4s ease-in-out, border-color 4s ease-in-out;
+            box-shadow: 0 0 20px rgba(94, 92, 230, 0.2);
         }
-        .breath-circle.inhale { transform: scale(1.3); }
-        .breath-circle.exhale { transform: scale(0.8); }
+        .breath-circle.inhale { 
+            transform: scale(1.3); 
+            box-shadow: 0 0 40px rgba(94, 92, 230, 0.6);
+            border-color: rgba(94, 92, 230, 0.8);
+        }
+        .breath-circle.exhale { 
+            transform: scale(0.8); 
+            box-shadow: 0 0 10px rgba(94, 92, 230, 0.1);
+            border-color: rgba(94, 92, 230, 0.3);
+        }
         
         .hold-area {
             margin-top: 20px;
@@ -314,6 +333,9 @@
             text-align: center;
             border: 2px dashed var(--text-tertiary);
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
             transition: all 0.3s;
         }
         .hold-area.holding {
@@ -442,6 +464,10 @@
 
         <div class="card" style="margin-top: auto; background: transparent; border: 1px solid var(--border-color); text-align: center;">
             <p class="text-caption">No streaks. No scores. Just this moment.</p>
+            <p class="text-caption" style="margin-top: 8px; color: var(--accent-secondary); font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span style="display:inline-block; width:6px; height:6px; background:var(--accent-secondary); border-radius:50%; box-shadow: 0 0 8px var(--accent-secondary);"></span>
+                Offline & Private Vault
+            </p>
         </div>
     </div>
 
@@ -640,6 +666,63 @@
 
     let hapticEnabled = true;
     let soundEnabled = false;
+    let audioCtx = null;
+    let noiseNode = null;
+
+    function startBrownNoise() {
+        if (!soundEnabled) return;
+        try {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            if (noiseNode) return; // Already running
+
+            const bufferSize = 10 * audioCtx.sampleRate;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            
+            let lastOut = 0.0;
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                output[i] = (lastOut + (0.02 * white)) / 1.02;
+                lastOut = output[i];
+                output[i] *= 3.5;
+            }
+            
+            noiseNode = audioCtx.createBufferSource();
+            noiseNode.buffer = noiseBuffer;
+            noiseNode.loop = true;
+            
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 400;
+            
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 2.0);
+            
+            noiseNode.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            noiseNode.start(0);
+        } catch (e) {
+            console.error('Failed to play ambient sound:', e);
+        }
+    }
+
+    function stopBrownNoise() {
+        if (noiseNode) {
+            try {
+                noiseNode.stop();
+                noiseNode.disconnect();
+            } catch(e) {}
+            noiseNode = null;
+        }
+    }
 
     async function loadSettings() {
         const settings = await getFromVault('settings');
@@ -654,20 +737,24 @@
         const hapticToggle = document.getElementById('haptic-toggle');
         const soundToggle = document.getElementById('sound-toggle');
         
-        if (hapticEnabled) {
-            hapticToggle.classList.add('active');
-            hapticToggle.setAttribute('aria-checked', 'true');
-        } else {
-            hapticToggle.classList.remove('active');
-            hapticToggle.setAttribute('aria-checked', 'false');
+        if (hapticToggle) {
+            if (hapticEnabled) {
+                hapticToggle.classList.add('active');
+                hapticToggle.setAttribute('aria-checked', 'true');
+            } else {
+                hapticToggle.classList.remove('active');
+                hapticToggle.setAttribute('aria-checked', 'false');
+            }
         }
         
-        if (soundEnabled) {
-            soundToggle.classList.add('active');
-            soundToggle.setAttribute('aria-checked', 'true');
-        } else {
-            soundToggle.classList.remove('active');
-            soundToggle.setAttribute('aria-checked', 'false');
+        if (soundToggle) {
+            if (soundEnabled) {
+                soundToggle.classList.add('active');
+                soundToggle.setAttribute('aria-checked', 'true');
+            } else {
+                soundToggle.classList.remove('active');
+                soundToggle.setAttribute('aria-checked', 'false');
+            }
         }
     }
 
@@ -728,12 +815,31 @@
     }
 
     function goToScreen(screenId, navItem) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
+        document.querySelectorAll('.screen').forEach(s => {
+            s.classList.remove('active');
+            s.classList.remove('no-nav');
+        });
+        
+        const activeScreen = document.getElementById(screenId);
+        activeScreen.classList.add('active');
         
         if (navItem) {
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             navItem.classList.add('active');
+        }
+
+        // Hide bottom navigation during active intervention gates and success screen
+        const bottomNav = document.querySelector('.bottom-nav');
+        if (screenId.startsWith('screen-gate') || screenId === 'screen-success') {
+            if (bottomNav) bottomNav.style.display = 'none';
+            activeScreen.classList.add('no-nav');
+        } else {
+            if (bottomNav) bottomNav.style.display = 'flex';
+        }
+
+        // Stop ambient noise if returning home or success
+        if (screenId === 'screen-home' || screenId === 'screen-success' || screenId === 'screen-settings') {
+            stopBrownNoise();
         }
 
         if (screenId === 'screen-gate2') initStroop();
@@ -748,6 +854,7 @@
         vibrate(10);
         stroopFailures = 0;
         matrixFailures = 0;
+        startBrownNoise();
         goToScreen('screen-gate1');
     }
 
@@ -943,6 +1050,8 @@
     }
 
     function initGrounding() {
+        if (breathInterval) clearInterval(breathInterval);
+        if (holdTimer) clearInterval(holdTimer);
         holdProgress = 0;
         const circle = document.getElementById('breath-circle');
         const text = document.getElementById('breath-text');

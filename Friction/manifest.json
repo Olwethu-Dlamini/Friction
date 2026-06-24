@@ -2,7 +2,7 @@
   "name": "Friction",
   "short_name": "Friction",
   "description": "Addiction is a frictionless slide. Friction is the handrail.",
-  "start_url": "/index.html",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",

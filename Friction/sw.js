@@ -1,10 +1,10 @@
 const CACHE_NAME = 'friction-v2.0';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png'
+  './',
+  './index.html',
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -26,7 +26,6 @@ self.addEventListener('fetch', event => {
         }
         return fetch(event.request);
       })
-    )
   );
 });
 
