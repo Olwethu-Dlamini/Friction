@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friction V2.0 - Hackathon Pitch Deck</title>
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-card: #1c1c1e;
+            --accent-primary: #5e5ce6;
+            --accent-success: #34c759;
+            --accent-warning: #ff9f0a;
+            --text-primary: #ffffff;
+            --text-secondary: #8e8e93;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0b0b0c;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Presentation Stage */
+        .stage {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-primary);
+            position: relative;
+            padding: 40px;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Slide Content Typography */
+        .slide h1 { font-size: 54px; font-weight: 800; letter-spacing: -1px; margin-bottom: 16px; }
+        .slide h2 { font-size: 36px; font-weight: 700; color: var(--accent-primary); margin-bottom: 24px; }
+        .slide p { font-size: 24px; color: var(--text-secondary); line-height: 1.6; }
+        .highlight { color: var(--text-primary); font-weight: 600; }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .visual-mock {
+            background-color: var(--bg-card);
+            border: 2px dashed #3a3a3c;
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        /* Remote Split-Pane Speaker Notes */
+        .notes-panel {
+            height: 250px;
+            background-color: var(--bg-card);
+            border-top: 2px solid #2c2c2e;
+            padding: 24px 40px;
+            overflow-y: auto;
+        }
+
+        .notes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #2c2c2e;
+            padding-bottom: 8px;
+        }
+
+        .notes-title { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-warning); font-weight: 700; }
+        .timer { font-size: 16px; font-family: monospace; color: var(--text-secondary); }
+        .script-text { font-size: 18px; line-height: 1.6; color: #e5e5ea; }
+        .script-text strong { color: var(--accent-primary); }
+
+        /* Navigation Controls Overlay */
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        .nav-btn {
+            background-color: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .nav-btn:hover { background-color: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+    <!-- VISUAL SLIDE PRESENTATION STAGE -->
+    <div class="stage">
+        
+        <!-- SLIDE 1: HOOK & THE NAME -->
+        <div class="slide active" data-step="1">
+            <h1>Friction</h1>
+            <h2>Addiction is a frictionless slide. Friction is the handrail.</h2>
+            <p>A zero-barrier, adaptive Progressive Web Application designed to reintroduce <span class="highlight">deliberate cognitive resistance</span> into instant-gratification digital loops.</p>
+        </div>
+
+        <!-- SLIDE 2: THE CRITICAL PROBLEM -->
+        <div class="slide" data-step="2">
+            <h2>The Systemic Problem</h2>
+            <div class="grid-2">
+                <div>
+                    <h3 style="font-size: 24px; margin-bottom: 12px;">The Toxic Shame Spiral</h3>
+                    <p style="font-size: 20px;">Traditional recovery tools use gamified streak tracking. Behavioral psychology reveals that breaking a streak triggers the <span class="highlight">Abstinence Violation Effect (AVE)</span>, weaponizing shame and accelerating a relapse binge.</p>
+                </div>
+                <div class="visual-mock" style="border-color: var(--accent-warning);">
+                    <div style="font-size: 40px; color: var(--accent-warning); margin-bottom: 10px;">⚡</div>
+                    <span style="color: white; font-weight: 600;">Streak Broken: 0 Days</span>
+                    <p style="font-size: 14px; margin-top: 8px;">The exact moment the tool becomes a source of psychological trauma.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: THE SOLUTION - 4 ADAPTIVE GATES -->
+        <div class="slide" data-step="3">
+            <h2>The Real-Time Emergency Brake</h2>
+            <div class="grid-2">
+                <div>
+                    <h3 style="font-size: 24px; margin-bottom: 12px;">The 4-Gate Pipeline</h3>
+                    <p style="font-size: 18px; margin-bottom: 10px;"><span class="highlight">1. Reality Anchor:</span> Quantifies macro "Time Theft" over micro costs.</p>
+                    <p style="font-size: 18px; margin-bottom: 10px;"><span class="highlight">2. Sensory Override:</span> Randomized Stroop Effect shatters muscle memory mapping.</p>
+                    <p style="font-size: 18px; margin-bottom: 10px;"><span class="highlight">3. Decay Matrix:</span> Visuospatial working memory distraction mimics craving degradation.</p>
+                    <p style="font-size: 18px;"><span class="highlight">4. Grounding:</span> Parasympathetic breathing switch with 500ms tremor grace window.</p>
+                </div>
+                <div class="visual-mock">
+                    <span style="color: var(--accent-primary); font-weight: bold; font-size: 14px; display: block; margin-bottom: 12px;">LIVE DEMO / INTERACTION LINK</span>
+                    <div style="background: var(--bg-primary); padding: 16px; border-radius: 12px; font-family: monospace; color: var(--accent-success);">
+                        https://friction-v2.dev
+                    </div>
+                    <p style="font-size: 14px; margin-top: 12px;">[ Shuffling interface active to lock focus ]</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: ARCHITECTURE & SYSTEM DESIGN -->
+        <div class="slide" data-step="4">
+            <h2>The Engineering Blueprint</h2>
+            <div class="grid-2">
+                <div>
+                    <h3 style="font-size: 24px; margin-bottom: 12px;">Resilience Ledger & Core Tech</h3>
+                    <p style="font-size: 20px;">Replaces streak metrics with an <span class="highlight">Intervention Ledger</span>—valuing active resilience over perfection. Fully decentralized, frameworkless, and zero-dependency configuration.</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="visual-mock" style="padding: 16px; font-size: 15px;"><b style="color: white; display:block; margin-bottom:4px;">100% Client-Side</b>Offline-First PWA</div>
+                    <div class="visual-mock" style="padding: 16px; font-size: 15px;"><b style="color: white; display:block; margin-bottom:4px;">Persistent Storage</b>Native IndexedDB Wrapper</div>
+                    <div class="visual-mock" style="padding: 16px; font-size: 15px;"><b style="color: white; display:block; margin-bottom:4px;">Adaptive UX</b>Automated Escape Hatch</div>
+                    <div class="visual-mock" style="padding: 16px; font-size: 15px;"><b style="color: white; display:block; margin-bottom:4px;">Privacy Preserved</b>Zero Data Leaving Device</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL OVERLAY -->
+        <div class="controls">
+            <button class="nav-btn" onclick="changeSlide(-1)">&larr;</button>
+            <button class="nav-btn" onclick="changeSlide(1)">&rarr;</button>
+        </div>
+    </div>
+
+    <!-- PRESENTER EXCLUSIVE LIVE REMOTE SCRIPT PANEL -->
+    <div class="notes-panel">
+        <div class="notes-header">
+            <div class="notes-title" id="note-heading">SPEAKER SCRIPT — SLIDE 1 OF 4</div>
+            <div class="timer" id="slide-timer">Pacing Cue: 0:00 - 0:30</div>
+        </div>
+        <div class="script-text" id="script-content">
+            Loading Script...
+        </div>
+    </div>
+
+    <script>
+        // Remote Delivery Presentation Script Configuration
+        const scripts = {
+            1: {
+                cue: "Pacing Cue: 0:00 - 0:30 | Focus on delivery weight.",
+                text: "<strong>\"Addiction is a frictionless slide.</strong> Every app on your phone is engineered to remove the barrier between impulse and action—through one-tap buying, auto-play, and infinite scroll. To fight this, traditional recovery apps use gamified streak counters. But behavioral psychology reveals a dark truth: when a user breaks a 47-day streak, they experience intense shame. This 'shame spiral' actually triggers a heavier binge and causes them to abandon the app entirely. The tool meant to save them becomes the source of trauma.\""
+            },
+            2: {
+                cue: "Pacing Cue: 0:30 - 0:50 | Contrast the visual error state with your text.",
+                text: "<strong>\"We built Friction</strong>—the only app designed to add resistance back. As you can see on my screen, it is a zero-barrier Progressive Web App that acts as an immediate emergency brake. Traditional systems track progress via a fragile linear clock, validating the shame mechanism. We completely decouple the application from metric validation to bypass the Abstinence Violation Effect entirely.\""
+            },
+            3: {
+                cue: "Pacing Cue: 0:50 - 1:35 | Talk smoothly while dropping link in virtual chat room.",
+                text: "<strong>\"When an urge hits, the user enters an adaptive 4-Gate pipeline.</strong> First, they confront 'Time Theft' via this tactile cost-benefit slider. Next, they face an upgraded Stroop Effect engine—notice how the button locations randomly shuffle on every single round to completely shatter muscle memory and force cognitive focus. They track fading urges in a dynamically scaling Decay Matrix, before grounding their nervous system with a tremor-forgiving breathing switch.\""
+            },
+            4: {
+                cue: "Pacing Cue: 1:35 - 2:00 | Strong finish, let the final phrase land.",
+                text: "<strong>\"If a user is too panicked to complete a gate, an automated 'Escape Hatch' instantly steps in</strong>, bypassing the complex tasks and guiding them straight to breathing. Crucially, we destroyed the streak. In its place is the <strong>Resilience Ledger</strong>, tracking Interventions Survived instead of days clean—rewarding effort over perfection. Built entirely client-side with persistent IndexedDB storage, it is completely private, fully offline-capable, and immune to OS cache sweeps. Friction works because it doesn't track the addiction; it interrupts the impulse. Addiction thrives on frictionless design. Friction is the handrail. I've dropped the live deployment link directly into the meeting chat—I invite you to open it and test the resistance yourself. Thank you.\""
+            }
+        };
+
+        let currentSlide = 1;
+        const totalSlides = 4;
+
+        function updatePresenterLayout() {
+            // Update Active Slide View
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.slide[data-step="${currentSlide}"]`).classList.add('active');
+
+            // Update Script Node Text
+            document.getElementById("note-heading").innerText = `SPEAKER SCRIPT — SLIDE ${currentSlide} OF ${totalSlides}`;
+            document.getElementById("slide-timer").innerText = scripts[currentSlide].cue;
+            document.getElementById("script-content").innerHTML = scripts[currentSlide].text;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 1) currentSlide = 1;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            updatePresenterLayout();
+        }
+
+        // Keyboard Event Triggers for Smooth Deck Traversal
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                changeSlide(-1);
+            }
+        });
+
+        // Seed initial display call
+        updatePresenterLayout();
+    </script>
+</body>
+</html>
