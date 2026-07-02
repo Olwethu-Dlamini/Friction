@@ -54,3 +54,41 @@ When *Create Friction* is tapped, the user moves through four gates. Each one is
 If the cognitive load is too high at gate 2 or 3, the **Escape Hatch** appears and offers a direct *Skip to Breathing* path to gate 4 — the goal is always to survive the moment, never to "win" the game.
 
 On completion, the user reaches a calm **"The wave has broken"** screen, records an optional note to their future self, and the intervention is added to the Resilience Ledger.
+
+---
+
+## Guided Walkthrough
+
+To avoid teaching users the flow *during* a crisis, Friction ships with an interactive in-app tour. It narrates the real gate screens in a safe "tour mode" where the gates can't trap, reset, or complete — the tour's own **Next** button drives navigation.
+
+- Runs automatically once, right after onboarding.
+- Can be replayed at any time from **Settings → Replay walkthrough**.
+- Reuses the app's *actual* gate screens (no cloned demo markup), so it never drifts out of sync with the real experience.
+
+The full design is documented in [`docs/superpowers/specs/2026-06-30-guided-walkthrough-design.md`](docs/superpowers/specs/2026-06-30-guided-walkthrough-design.md).
+
+---
+
+## Tech & Architecture
+
+Friction is intentionally **dependency-free and self-contained** — the entire app is a single `index.html` file with inline CSS and JavaScript. This keeps it fast, auditable, and trivially deployable as a static site.
+
+| Concern | Implementation |
+|---------|----------------|
+| **UI** | Hand-written HTML/CSS, mobile-first, dark theme, screen-based navigation |
+| **Logic** | Vanilla JavaScript — no frameworks, no build step, no bundler |
+| **Storage** | **IndexedDB** ("the vault") via a small `saveToVault` / `getFromVault` wrapper |
+| **Audio** | **Web Audio API** brown-noise synthesiser generated on the fly (no audio assets) |
+| **Offline** | Service worker (`sw.js`) + Web App Manifest (`manifest.json`) |
+| **Install** | Installable PWA with 192px and 512px icons, portrait, standalone display |
+
+**Why no framework?** A recovery tool must be reliable, private, and offline-proof. A single static file with no external dependencies has nothing to fail to load, nothing to phone home, and nothing to break a build — the resistance the app adds is deliberate; the tech stack is deliberately frictionless.
+
+---
+
+## Privacy & Data
+
+- **100% local.** All state lives in IndexedDB on the user's own device.
+- **No accounts, no servers, no analytics, no cloud sync.** Nothing is transmitted.
+- **Immune to OS cache sweeps** — IndexedDB persists where a simple cache would be cleared.
+- **User-owned.** *Settings → Clear All Data* wipes everything, including notes, the ledger, and the walkthrough-seen flag.
