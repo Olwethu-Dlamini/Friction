@@ -92,3 +92,60 @@ Friction is intentionally **dependency-free and self-contained** — the entire 
 - **No accounts, no servers, no analytics, no cloud sync.** Nothing is transmitted.
 - **Immune to OS cache sweeps** — IndexedDB persists where a simple cache would be cleared.
 - **User-owned.** *Settings → Clear All Data* wipes everything, including notes, the ledger, and the walkthrough-seen flag.
+
+---
+
+## Getting Started
+
+No build step, no dependencies. Because it's a PWA that uses a service worker, it needs to be served over `http(s)` rather than opened directly from the filesystem.
+
+**Clone and serve locally:**
+
+```bash
+git clone https://github.com/Olwethu-Dlamini/Friction.git
+cd Friction
+
+# then serve the folder with any static server, e.g.:
+python -m http.server 8000
+#   or:  npx serve .
+```
+
+Open `http://localhost:8000` in a browser and, on mobile or desktop Chrome, use **"Install app"** / **"Add to Home Screen"** to run it as a standalone PWA.
+
+> Opening `index.html` directly via `file://` will render the UI, but the service worker (and therefore full offline install behaviour) won't register — always serve over a local web server.
+
+## Deployment
+
+Friction is deployed as a static site on **GitHub Pages** from the repository root (`index.html`), which is why the entry point lives at the top level. Any static host (Netlify, Vercel, Cloudflare Pages, plain object storage) works equally well — just publish the repository contents.
+
+---
+
+## Project Structure
+
+```
+.
+├── index.html          # The entire app — UI, logic, gates, walkthrough (single file)
+├── manifest.json       # PWA manifest (name, icons, theme, display mode)
+├── sw.js               # Service worker for offline caching
+├── icon-192.png        # PWA icon (192×192)
+├── icon-512.png        # PWA icon (512×512)
+├── presentation.txt    # Pitch script
+├── presentation live.html
+└── docs/
+    └── superpowers/specs/
+        └── 2026-06-30-guided-walkthrough-design.md   # Walkthrough design spec
+```
+
+> `Friction.html`, the `Qwen_*`/`Gemini_*` files, and the earlier `Friction/` folder are prototype and asset-generation artifacts kept for provenance. The canonical, deployed app is the root-level `index.html`.
+
+---
+
+## Status
+
+**v2.0** — the anti-streak recovery build with the full 4-Gate pipeline, Escape Hatch, Resilience Ledger, Future Self Vault, brown-noise engine, and guided walkthrough.
+
+## Credits
+
+Built by [**Olwethu Dlamini**](https://github.com/Olwethu-Dlamini) for the **Youth xAI Hackathon**.
+
+*Addiction thrives on frictionless design. Friction is the handrail.*
